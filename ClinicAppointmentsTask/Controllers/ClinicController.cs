@@ -47,15 +47,14 @@ namespace ClinicAppointmentsTask.Controllers
 
         // POST: api/Clinic
         [HttpPost]
-        public IActionResult AddClinic(string CSepcia, int NumberOfSlots)
+        public IActionResult AddClinic([FromBody] Clinic clinic)
         {
             try
             {
-                var clinic = new Clinic
+                if (!ModelState.IsValid)
                 {
-                    ClinicSepcialization = CSepcia,
-                    NumberOfSlots = NumberOfSlots
-                };
+                    return BadRequest(new { Message = "Invalid data", Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), StatusCode = 400 });
+                }
 
                 _clinicService.AddClinic(clinic);
                 return CreatedAtAction(nameof(GetClinicById), new { id = clinic.ClinicId }, new { Data = clinic, Message = "Clinic added successfully", StatusCode = 201 });
@@ -68,20 +67,25 @@ namespace ClinicAppointmentsTask.Controllers
 
         // PUT: api/Clinic/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateClinic(int id, string CSepcia, int NumberOfSlots)
+        public IActionResult UpdateClinic(int id, [FromBody] Clinic clinic)
         {
-            var clinic = _clinicService.GetClinicById(id);
-            if (clinic == null)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Message = "Invalid data", Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), StatusCode = 400 });
+            }
+
+            var existingClinic = _clinicService.GetClinicById(id);
+            if (existingClinic == null)
             {
                 return NotFound(new { Message = "Clinic not found", StatusCode = 404 });
             }
 
             try
             {
-                clinic.ClinicSepcialization = CSepcia;
-                clinic.NumberOfSlots = NumberOfSlots;
+                existingClinic.ClinicSepcialization = clinic.ClinicSepcialization;
+                existingClinic.NumberOfSlots = clinic.NumberOfSlots;
 
-                _clinicService.UpdateClinic(clinic);
+                _clinicService.UpdateClinic(existingClinic);
                 return NoContent();
             }
             catch (Exception ex)
