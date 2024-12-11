@@ -24,7 +24,12 @@ namespace ClinicAppointmentsTask.Controllers
         public IActionResult GetAllPatients()
         {
             var patients = _service.GetAllPatients();
-            return Ok(patients);
+            if (patients == null || !patients.Any())
+            {
+                return NotFound(new { Message = "No patients found", StatusCode = 404 });
+            }
+            return Ok(new { Data = patients, Message = "Patients retrieved successfully", StatusCode = 200 });
+
         }
 
         // GET: api/Patient/{id}
@@ -33,24 +38,32 @@ namespace ClinicAppointmentsTask.Controllers
         {
             var patient = _service.GetPatientById(id);
             if (patient == null)
-                return NotFound();
+                return NotFound(new { Message = "Patient not found", StatusCode = 404 });
 
-            return Ok(patient);
+            return Ok(new { Data = patient, Message = "Patient retrieved successfully", StatusCode = 200 });
+
         }
 
         // POST: api/Patient
         [HttpPost]
         public IActionResult AddPatient(string name, int age, string gender)
         {
-            var patient = new Patient
+            try
             {
-                PatientName = name,
-                Age = age,
-                Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender")
-            };
+                var patient = new Patient
+                {
+                    PatientName = name,
+                    Age = age,
+                    Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender")
+                };
 
-            _service.AddPatient(patient);
-            return CreatedAtAction(nameof(GetPatientById), new { id = patient.PatientId }, patient);
+                _service.AddPatient(patient);
+                return CreatedAtAction(nameof(GetPatientById), new { id = patient.PatientId }, new { Data = patient, Message = "Patient created successfully", StatusCode = 201 });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message, StatusCode = 400 });
+            }
         }
 
         // PUT: api/Patient/{id}
@@ -59,22 +72,33 @@ namespace ClinicAppointmentsTask.Controllers
         {
             var patient = _service.GetPatientById(id);
             if (patient == null)
-                return NotFound();
+                return NotFound(new { Message = "Patient not found", StatusCode = 404 });
 
-            patient.PatientName = name;
-            patient.Age = age;
-            patient.Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender");
+            try
+            {
+                patient.PatientName = name;
+                patient.Age = age;
+                patient.Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender");
 
-            _service.UpdatePatient(patient);
-            return NoContent();
+                _service.UpdatePatient(patient);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message, StatusCode = 400 });
+            }
         }
 
         // DELETE: api/Patient/{id}
         [HttpDelete("{id}")]
         public IActionResult DeletePatient(int id)
         {
+            var patient = _service.GetPatientById(id);
+            if (patient == null)
+                return NotFound(new { Message = "Patient not found", StatusCode = 404 });
+
             _service.DeletePatient(id);
-            return NoContent();
+            return Ok(new { Message = "Patient deleted successfully", StatusCode = 200 });
         }
     }
 }
