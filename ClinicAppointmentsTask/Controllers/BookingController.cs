@@ -21,12 +21,19 @@ namespace ClinicAppointmentsTask.Controllers
         [HttpPost("BookAppointment")]
         public async Task<IActionResult> BookAppointmentAsync(int patientId, int clinicId, DateTime date)
         {
-            var result = await _bookingService.BookAppointmentAsync(patientId, clinicId, date);
-            if (result.Contains("successfully booked"))
+            try
             {
-                return Ok(result);
+                var result = await _bookingService.BookAppointmentAsync(patientId, clinicId, date);
+                if (result.Contains("successfully booked"))
+                {
+                    return Ok(new { Message = result, StatusCode = 200 });
+                }
+                return BadRequest(new { Message = result, StatusCode = 400 });
             }
-            return BadRequest(result);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message, StatusCode = 500 });
+            }
         }
 
         // GET: api/Booking/ViewByClinicId/{clinicId}
@@ -34,7 +41,11 @@ namespace ClinicAppointmentsTask.Controllers
         public IActionResult ViewBookingsByClinicId(int clinicId)
         {
             var bookings = _bookingService.ViewBookingsByClinicId(clinicId);
-            return Ok(bookings);
+            if (bookings == null || !bookings.Any())
+            {
+                return NotFound(new { Message = "No bookings found for the specified clinic ID", StatusCode = 404 });
+            }
+            return Ok(new { Data = bookings, Message = "Bookings retrieved successfully", StatusCode = 200 });
         }
 
         // GET: api/Booking/ViewByClinicSpecialization/{specialization}
@@ -42,7 +53,11 @@ namespace ClinicAppointmentsTask.Controllers
         public IActionResult ViewBookingsByClinicSpecialization(string specialization)
         {
             var bookings = _bookingService.ViewBookingsByClinicSpecialization(specialization);
-            return Ok(bookings);
+            if (bookings == null || !bookings.Any())
+            {
+                return NotFound(new { Message = "No bookings found for the specified specialization", StatusCode = 404 });
+            }
+            return Ok(new { Data = bookings, Message = "Bookings retrieved successfully", StatusCode = 200 });
         }
 
         // GET: api/Booking/ViewByPatientId/{patientId}
@@ -50,7 +65,11 @@ namespace ClinicAppointmentsTask.Controllers
         public IActionResult ViewBookingsByPatientId(int patientId)
         {
             var bookings = _bookingService.ViewBookingsByPatientId(patientId);
-            return Ok(bookings);
+            if (bookings == null || !bookings.Any())
+            {
+                return NotFound(new { Message = "No bookings found for the specified patient ID", StatusCode = 404 });
+            }
+            return Ok(new { Data = bookings, Message = "Bookings retrieved successfully", StatusCode = 200 });
         }
 
         // GET: api/Booking/ViewByPatientName/{patientName}
@@ -58,15 +77,26 @@ namespace ClinicAppointmentsTask.Controllers
         public IActionResult ViewAppointmentsByPatientName(string patientName)
         {
             var bookings = _bookingService.ViewAppointmentsByPatientName(patientName);
-            return Ok(bookings);
+            if (bookings == null || !bookings.Any())
+            {
+                return NotFound(new { Message = "No bookings found for the specified patient name", StatusCode = 404 });
+            }
+            return Ok(new { Data = bookings, Message = "Bookings retrieved successfully", StatusCode = 200 });
         }
 
         // POST: api/Booking/AddBooking
         [HttpPost("AddBooking")]
         public IActionResult AddBooking(string CSepcia, int NumberOfSlots)
         {
-            // Implementation for adding a booking based on the parameters.
-            return Ok("Booking added successfully");
+            try
+            {
+                // Implementation for adding a booking based on the parameters.
+                return Ok(new { Message = "Booking added successfully", StatusCode = 201 });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message, StatusCode = 500 });
+            }
         }
     }
 }
