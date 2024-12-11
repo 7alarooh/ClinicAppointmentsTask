@@ -14,5 +14,8 @@ namespace ClinicAppointmentsTask.Models
         [Required]
         [Range(0, 20, ErrorMessage = "Limit reached for today!")]
         public int NumberOfSlots { get; set; } = 0; // Validation for number of slots
-}
+
+        [JsonIgnore]
+        public virtual ICollection<Booking>? Booking { get; set; } // Relationship for many-to-many with Booking.
+    }
 }
