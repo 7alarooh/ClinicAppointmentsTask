@@ -9,5 +9,9 @@ namespace ClinicAppointmentsTask.Repositories
         void AddBooking(Booking booking);
         void UpdateBooking(Booking booking);
         void DeleteBooking(int patientId, int clinicId, DateTime dateToday);
+        IEnumerable<Booking> ViewBookingsByClinicId(int clinicId);
+        IEnumerable<Booking> ViewBookingsByClinicSpecialization(string specialization);
+        IEnumerable<Booking> ViewBookingsByPatientId(int patientId);
+        IEnumerable<Booking> ViewAppointmentsByPatientName(string patientName);
     }
 }

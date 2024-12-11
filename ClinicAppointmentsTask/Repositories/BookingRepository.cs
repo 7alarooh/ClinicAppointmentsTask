@@ -48,5 +48,28 @@ namespace ClinicAppointmentsTask.Repositories
                 _context.SaveChanges();
             }
         }
+        // View bookings by Clinic ID
+        public IEnumerable<Booking> ViewBookingsByClinicId(int clinicId)
+        {
+            return _context.Bookings.Include(b => b.Patient).Include(b => b.Clinic).Where(b => b.ClinicId == clinicId).ToList();
+        }
+
+        // View bookings by Clinic Specialization
+        public IEnumerable<Booking> ViewBookingsByClinicSpecialization(string specialization)
+        {
+            return _context.Bookings.Include(b => b.Patient).Include(b => b.Clinic).Where(b => b.Clinic.ClinicSepcialization == specialization).ToList();
+        }
+
+        // View bookings by Patient ID
+        public IEnumerable<Booking> ViewBookingsByPatientId(int patientId)
+        {
+            return _context.Bookings.Include(b => b.Patient).Include(b => b.Clinic).Where(b => b.PatientId == patientId).ToList();
+        }
+
+        // View appointments by Patient Name
+        public IEnumerable<Booking> ViewAppointmentsByPatientName(string patientName)
+        {
+            return _context.Bookings.Include(b => b.Patient).Include(b => b.Clinic).Where(b => b.Patient.PatientName == patientName).ToList();
+        }
     }
 }

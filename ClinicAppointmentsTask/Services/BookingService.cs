@@ -78,5 +78,24 @@ namespace ClinicAppointmentsTask.Services
 
             return $"Appointment successfully booked for {patient.PatientName} on {nextAvailableTime:yyyy-MM-dd HH:mm} at {clinic.ClinicSepcialization} clinic.";
         }
+        public IEnumerable<Booking> ViewBookingsByClinicId(int clinicId)
+        {
+            return _bookingRepository.ViewBookingsByClinicId(clinicId);
+        }
+
+        public IEnumerable<Booking> ViewBookingsByClinicSpecialization(string specialization)
+        {
+            return _bookingRepository.ViewBookingsByClinicSpecialization(specialization);
+        }
+
+        public IEnumerable<Booking> ViewBookingsByPatientId(int patientId)
+        {
+            return _bookingRepository.ViewBookingsByPatientId(patientId);
+        }
+
+        public IEnumerable<Booking> ViewAppointmentsByPatientName(string patientName)
+        {
+            return _bookingRepository.ViewAppointmentsByPatientName(patientName);
+        }
     }
 }
