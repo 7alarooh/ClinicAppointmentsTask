@@ -24,7 +24,12 @@ namespace ClinicAppointmentsTask.Controllers
         public IActionResult GetAllClinics()
         {
             var clinics = _clinicService.GetAllClinics();
-            return Ok(clinics);
+            if (clinics == null || !clinics.Any())
+            {
+                return NotFound(new { Message = "No clinics found", StatusCode = 404 });
+            }
+
+            return Ok(new { Data = clinics, Message = "Clinics retrieved successfully", StatusCode = 200 });
         }
 
         // GET: api/Clinic/{id}
@@ -33,23 +38,32 @@ namespace ClinicAppointmentsTask.Controllers
         {
             var clinic = _clinicService.GetClinicById(id);
             if (clinic == null)
-                return NotFound();
+            {
+                return NotFound(new { Message = "Clinic not found", StatusCode = 404 });
+            }
 
-            return Ok(clinic);
+            return Ok(new { Data = clinic, Message = "Clinic retrieved successfully", StatusCode = 200 });
         }
 
         // POST: api/Clinic
         [HttpPost]
         public IActionResult AddClinic(string CSepcia, int NumberOfSlots)
         {
-            var clinic = new Clinic
+            try
             {
-                ClinicSepcialization = CSepcia,
-                NumberOfSlots = NumberOfSlots
-            };
+                var clinic = new Clinic
+                {
+                    ClinicSepcialization = CSepcia,
+                    NumberOfSlots = NumberOfSlots
+                };
 
-            _clinicService.AddClinic(clinic);
-            return CreatedAtAction(nameof(GetClinicById), new { id = clinic.ClinicId }, clinic);
+                _clinicService.AddClinic(clinic);
+                return CreatedAtAction(nameof(GetClinicById), new { id = clinic.ClinicId }, new { Data = clinic, Message = "Clinic added successfully", StatusCode = 201 });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message, StatusCode = 400 });
+            }
         }
 
         // PUT: api/Clinic/{id}
@@ -58,21 +72,36 @@ namespace ClinicAppointmentsTask.Controllers
         {
             var clinic = _clinicService.GetClinicById(id);
             if (clinic == null)
-                return NotFound();
+            {
+                return NotFound(new { Message = "Clinic not found", StatusCode = 404 });
+            }
 
-            clinic.ClinicSepcialization = CSepcia;
-            clinic.NumberOfSlots = NumberOfSlots;
+            try
+            {
+                clinic.ClinicSepcialization = CSepcia;
+                clinic.NumberOfSlots = NumberOfSlots;
 
-            _clinicService.UpdateClinic(clinic);
-            return NoContent();
+                _clinicService.UpdateClinic(clinic);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message, StatusCode = 400 });
+            }
         }
 
         // DELETE: api/Clinic/{id}
         [HttpDelete("{id}")]
         public IActionResult DeleteClinic(int id)
         {
+            var clinic = _clinicService.GetClinicById(id);
+            if (clinic == null)
+            {
+                return NotFound(new { Message = "Clinic not found", StatusCode = 404 });
+            }
+
             _clinicService.DeleteClinic(id);
-            return NoContent();
+            return Ok(new { Message = "Clinic deleted successfully", StatusCode = 200 });
         }
     }
 }
