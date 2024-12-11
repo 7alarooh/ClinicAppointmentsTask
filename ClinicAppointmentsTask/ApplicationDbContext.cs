@@ -9,9 +9,18 @@ namespace ClinicAppointmentsTask
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-
         }
-
+        public ApplicationDbContext()
+        {
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Use SQL Server as the database provider
+                optionsBuilder.UseSqlServer("YourConnectionStringHere");
+            }
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Composite primary key for Booking (PId, CId, DateToday)
