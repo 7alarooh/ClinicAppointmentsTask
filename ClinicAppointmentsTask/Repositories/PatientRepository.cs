@@ -8,7 +8,7 @@ using ClinicAppointmentsTask.Models;
 
 namespace ClinicAppointmentsTask.Repositories
 {
-    public class PatientRepository
+    public class PatientRepository : IPatientRepository
     {
         private readonly ApplicationDbContext _context;
 
