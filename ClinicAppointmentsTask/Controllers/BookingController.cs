@@ -5,25 +5,30 @@ using System.Numerics;
 
 namespace ClinicAppointmentsTask.Controllers
 {
-    
-        [ApiController]
-        [Route("api/[controller]")]
-        public class BookingController : ControllerBase
-        {
-            private readonly IBookingService _bookingService;
 
-            public BookingController(IBookingService bookingService)
-            {
-                _bookingService = bookingService;
-            }
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BookingController : ControllerBase
+    {
+        private readonly IBookingService _bookingService;
+
+        public BookingController(IBookingService bookingService)
+        {
+            _bookingService = bookingService;
+        }
 
         // POST: api/Booking/BookAppointment
         [HttpPost("BookAppointment")]
-        public async Task<IActionResult> BookAppointmentAsync(int patientId, int clinicId, DateTime date)
+        public async Task<IActionResult> BookAppointmentAsync([FromBody] Booking booking)
         {
             try
             {
-                var result = await _bookingService.BookAppointmentAsync(patientId, clinicId, date);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { Message = "Invalid data", Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), StatusCode = 400 });
+                }
+
+                var result = await _bookingService.BookAppointmentAsync(booking.PatientId, booking.ClinicId, booking.DateToday);
                 if (result.Contains("successfully booked"))
                 {
                     return Ok(new { Message = result, StatusCode = 200 });
@@ -86,10 +91,15 @@ namespace ClinicAppointmentsTask.Controllers
 
         // POST: api/Booking/AddBooking
         [HttpPost("AddBooking")]
-        public IActionResult AddBooking(string CSepcia, int NumberOfSlots)
+        public IActionResult AddBooking([FromBody] Booking booking)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { Message = "Invalid data", Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), StatusCode = 400 });
+                }
+
                 // Implementation for adding a booking based on the parameters.
                 return Ok(new { Message = "Booking added successfully", StatusCode = 201 });
             }
