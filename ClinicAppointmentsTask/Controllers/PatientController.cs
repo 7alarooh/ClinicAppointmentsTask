@@ -29,7 +29,6 @@ namespace ClinicAppointmentsTask.Controllers
                 return NotFound(new { Message = "No patients found", StatusCode = 404 });
             }
             return Ok(new { Data = patients, Message = "Patients retrieved successfully", StatusCode = 200 });
-
         }
 
         // GET: api/Patient/{id}
@@ -41,26 +40,23 @@ namespace ClinicAppointmentsTask.Controllers
                 return NotFound(new { Message = "Patient not found", StatusCode = 404 });
 
             return Ok(new { Data = patient, Message = "Patient retrieved successfully", StatusCode = 200 });
-
         }
 
         // POST: api/Patient
         [HttpPost]
-        public IActionResult AddPatient(string name, int age, string gender)
+        public IActionResult AddPatient([FromBody] Patient patient)
         {
             try
             {
-                var patient = new Patient
+                if (!ModelState.IsValid)
                 {
-                    PatientName = name,
-                    Age = age,
-                    Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender")
-                };
+                    return BadRequest(new { Message = "Invalid data", Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), StatusCode = 400 });
+                }
 
                 _service.AddPatient(patient);
                 return CreatedAtAction(nameof(GetPatientById), new { id = patient.PatientId }, new { Data = patient, Message = "Patient created successfully", StatusCode = 201 });
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message, StatusCode = 400 });
             }
@@ -68,22 +64,29 @@ namespace ClinicAppointmentsTask.Controllers
 
         // PUT: api/Patient/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdatePatient(int id, string name, int age, string gender)
+        public IActionResult UpdatePatient(int id, [FromBody] Patient patient)
         {
-            var patient = _service.GetPatientById(id);
-            if (patient == null)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Message = "Invalid data", Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), StatusCode = 400 });
+            }
+
+            var existingPatient = _service.GetPatientById(id);
+            if (existingPatient == null)
+            {
                 return NotFound(new { Message = "Patient not found", StatusCode = 404 });
+            }
 
             try
             {
-                patient.PatientName = name;
-                patient.Age = age;
-                patient.Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender");
+                existingPatient.PatientName = patient.PatientName;
+                existingPatient.Age = patient.Age;
+                existingPatient.Gender = patient.Gender;
 
-                _service.UpdatePatient(patient);
+                _service.UpdatePatient(existingPatient);
                 return NoContent();
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message, StatusCode = 400 });
             }
