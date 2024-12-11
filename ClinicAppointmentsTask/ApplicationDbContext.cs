@@ -1,4 +1,6 @@
-﻿using ClinicAppointmentsTask.Models;
+﻿// API versioning and Swagger API documentation can be applied for maintaining and documenting the Rest API.
+
+using ClinicAppointmentsTask.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicAppointmentsTask
@@ -59,3 +61,5 @@ namespace ClinicAppointmentsTask
         public DbSet<Clinic> Clinics { get; set; }
     }
 }
+
+
