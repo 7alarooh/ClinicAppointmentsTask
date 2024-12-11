@@ -6,7 +6,7 @@ namespace ClinicAppointmentsTask.Services
     // This service interacts with the PatientRepository and acts as the Business Logic Layer (BLL).
     // It provides higher-level operations on Patient data, abstracting away data access logic.
 
-    public class PatientService
+    public class PatientService : IPatientService
     {
         private readonly IPatientRepository _repository;
 
