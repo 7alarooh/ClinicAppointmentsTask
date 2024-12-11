@@ -40,18 +40,30 @@ namespace ClinicAppointmentsTask.Controllers
 
         // POST: api/Patient
         [HttpPost]
-        public IActionResult AddPatient([FromBody] Patient patient)
+        public IActionResult AddPatient(string name, int age, string gender)
         {
+            var patient = new Patient
+            {
+                PatientName = name,
+                Age = age,
+                Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender")
+            };
+
             _service.AddPatient(patient);
             return CreatedAtAction(nameof(GetPatientById), new { id = patient.PatientId }, patient);
         }
 
         // PUT: api/Patient/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdatePatient(int id, [FromBody] Patient patient)
+        public IActionResult UpdatePatient(int id, string name, int age, string gender)
         {
-            if (id != patient.PatientId)
-                return BadRequest();
+            var patient = _service.GetPatientById(id);
+            if (patient == null)
+                return NotFound();
+
+            patient.PatientName = name;
+            patient.Age = age;
+            patient.Gender = Enum.TryParse<Gender>(gender, out var parsedGender) ? parsedGender : throw new ArgumentException("Invalid gender");
 
             _service.UpdatePatient(patient);
             return NoContent();

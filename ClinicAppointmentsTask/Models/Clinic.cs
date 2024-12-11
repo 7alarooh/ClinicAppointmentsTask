@@ -10,6 +10,7 @@ namespace ClinicAppointmentsTask.Models
         public int ClinicId { get; set; }
         [Required]    
         [StringLength(100, ErrorMessage = "Clinic specialization cannot exceed 100 characters.")]
+     
         public string ClinicSepcialization { get; set; } // Clinic specialization validation
         [Required]
         [Range(0, 20, ErrorMessage = "Limit reached for today!")]
