@@ -1,0 +1,59 @@
+==========================================================
+PatientController Test 
+==========================================================
+
+                        1. Get All Patients
++ "Patients retrieved successfully"
+
+*if no Patients :   "message": "No patients found", "statusCode": 404
+
+
+                        2. Get Patient by ID
+*if No Id Patient like the input :   "message": "No patients found", "statusCode": 404
+
++ if found id: "message": "Patient retrieved successfully", "statusCode": 200
+
+
+                        3. Add a New Patient
+* empty in Patient Name: "The PatientName field is required."
+* add number in Patient Name :"Patient name must contain only letters and spaces."
+* add -tive number:"Age must be between 0 and 120."
+* add letter in Age: "'a' is an invalid start of a value."
+* add -tive number in Gender : "Invalid gender."
+* add naming in Gender: "The JSON value could not be converted to ClinicAppointmentsTask.Models.Gender."
+
++ add all corrected data: "Patient created successfully", "statusCode": 201
+
+                        4. Delete Patient
++ "message": "Patient deleted successfully",  "statusCode": 200
+
+* "message": "Patient not found", "statusCode": 404
+
+=================================================================
+ClinicController Test 
+=================================================================
+                        1. Get All Clinics
+* "message": "No clinics found", "statusCode": 404
++
+
+
+                        2. Get Clinic by ID
++ if found the Id : "message": "Clinic retrieved successfully",  "statusCode": 200
+
+* if not found Id:"message": "Clinic not found",  "statusCode": 404
+
+
+                        3. Add a New Clinic
++ "message": "Clinic added successfully", "statusCode": 201
+
+* if add the same clinic Sepcialization: "message": "An error occurred while saving the entity changes. See the inner exception for details.", "statusCode": 400
+*  if add more than 20 in NumberOfSlots: "Limit reached for today!"
+
+
+
+                        4. Update Clinic
+
+
+                        
+                        5. Delete Clinic
+
