@@ -8,41 +8,41 @@ namespace ClinicAppointmentsTask.Services
 {
     public class ClinicService : IClinicService
     {
-        private readonly IClinicRepository _repository;
+        private readonly IClinicRepository _clinicRepository;
 
-        public ClinicService(IClinicRepository repository)
+        public ClinicService(IClinicRepository clinicRepository)
         {
-            _repository = repository;
+            _clinicRepository = clinicRepository;
         }
 
         // Retrieve all clinics
         public IEnumerable<Clinic> GetAllClinics()
         {
-            return _repository.GetAllClinics();
+            return _clinicRepository.GetAllClinics();
         }
 
         // Retrieve a specific clinic by ID
         public Clinic? GetClinicById(int id)
         {
-            return _repository.GetClinicById(id);
+            return _clinicRepository.GetClinicById(id);
         }
 
         // Add a new clinic
         public void AddClinic(Clinic clinic)
         {
-            _repository.AddClinic(clinic);
+            _clinicRepository.AddClinic(clinic);
         }
 
         // Update clinic information
         public void UpdateClinic(Clinic clinic)
         {
-            _repository.UpdateClinic(clinic);
+            _clinicRepository.UpdateClinic(clinic);
         }
 
         // Delete a clinic by ID
         public void DeleteClinic(int id)
         {
-            _repository.DeleteClinic(id);
+            _clinicRepository.DeleteClinic(id);
         }
     }
 }

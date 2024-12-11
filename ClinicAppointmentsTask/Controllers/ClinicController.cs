@@ -12,18 +12,18 @@ namespace ClinicAppointmentsTask.Controllers
     [Route("api/[controller]")]
     public class ClinicController : ControllerBase
     {
-        private readonly IClinicService _service;
+        private readonly IClinicService _clinicService;
 
-        public ClinicController(IClinicService service)
+        public ClinicController(IClinicService clinicService)
         {
-            _service = service;
+            _clinicService = clinicService;
         }
 
         // GET: api/Clinic
         [HttpGet]
         public IActionResult GetAllClinics()
         {
-            var clinics = _service.GetAllClinics();
+            var clinics = _clinicService.GetAllClinics();
             return Ok(clinics);
         }
 
@@ -31,7 +31,7 @@ namespace ClinicAppointmentsTask.Controllers
         [HttpGet("{id}")]
         public IActionResult GetClinicById(int id)
         {
-            var clinic = _service.GetClinicById(id);
+            var clinic = _clinicService.GetClinicById(id);
             if (clinic == null)
                 return NotFound();
 
@@ -42,7 +42,7 @@ namespace ClinicAppointmentsTask.Controllers
         [HttpPost]
         public IActionResult AddClinic([FromBody] Clinic clinic)
         {
-            _service.AddClinic(clinic);
+            _clinicService.AddClinic(clinic);
             return CreatedAtAction(nameof(GetClinicById), new { id = clinic.ClinicId }, clinic);
         }
 
@@ -53,7 +53,7 @@ namespace ClinicAppointmentsTask.Controllers
             if (id != clinic.ClinicId)
                 return BadRequest();
 
-            _service.UpdateClinic(clinic);
+            _clinicService.UpdateClinic(clinic);
             return NoContent();
         }
 
@@ -61,7 +61,7 @@ namespace ClinicAppointmentsTask.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteClinic(int id)
         {
-            _service.DeleteClinic(id);
+            _clinicService.DeleteClinic(id);
             return NoContent();
         }
     }
