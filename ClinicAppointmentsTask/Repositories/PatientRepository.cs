@@ -1,4 +1,10 @@
-﻿using ClinicAppointmentsTask.Models;
+﻿// This repository follows the Repository Pattern to abstract data access logic for the Patient entity.
+// It serves as part of the DAL (Data Access Layer) in a 3-tier system architecture.
+// Data Transfer Objects (DTOs) can be used in conjunction with this repository to simplify data exchange.
+// Dependency Injection ensures the lifecycle management of ApplicationDbContext.
+// CRUD operations here can be exposed via a Business Logic Layer (BLL) and consumed in the Presentation Layer.
+
+using ClinicAppointmentsTask.Models;
 
 namespace ClinicAppointmentsTask.Repositories
 {
