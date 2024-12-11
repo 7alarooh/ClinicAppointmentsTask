@@ -40,18 +40,28 @@ namespace ClinicAppointmentsTask.Controllers
 
         // POST: api/Clinic
         [HttpPost]
-        public IActionResult AddClinic([FromBody] Clinic clinic)
+        public IActionResult AddClinic(string CSepcia, int NumberOfSlots)
         {
+            var clinic = new Clinic
+            {
+                ClinicSepcialization = CSepcia,
+                NumberOfSlots = NumberOfSlots
+            };
+
             _clinicService.AddClinic(clinic);
             return CreatedAtAction(nameof(GetClinicById), new { id = clinic.ClinicId }, clinic);
         }
 
         // PUT: api/Clinic/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateClinic(int id, [FromBody] Clinic clinic)
+        public IActionResult UpdateClinic(int id, string CSepcia, int NumberOfSlots)
         {
-            if (id != clinic.ClinicId)
-                return BadRequest();
+            var clinic = _clinicService.GetClinicById(id);
+            if (clinic == null)
+                return NotFound();
+
+            clinic.ClinicSepcialization = CSepcia;
+            clinic.NumberOfSlots = NumberOfSlots;
 
             _clinicService.UpdateClinic(clinic);
             return NoContent();
